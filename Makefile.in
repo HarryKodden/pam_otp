@@ -1,0 +1,52 @@
+CC = @CC@
+LDFLAGS = @LDFLAGS@
+CPPFLAGS = @CPPFLAGS@ @DEFS@
+CFLAGS = @CFLAGS@
+LIBS = @LIBS@
+SHOBJFLAGS = @SHOBJFLAGS@
+SHOBJLDFLAGS = @SHOBJLDFLAGS@
+
+PREFIX = @prefix@
+prefix = $(PREFIX)
+exec_prefix = @exec_prefix@
+libdir = @libdir@
+security_dir = $(libdir)/security
+
+all: pam_otp.@SHOBJEXT@
+
+pam_otp.o: pam_otp.c
+otp.o: otp.c
+pam_otp.@SHOBJEXT@: pam_otp.o otp.o
+test.o: test.c
+
+%.o:
+	$(CC) $(SHOBJFLAGS) $(CFLAGS) $(CPPFLAGS) -o "$@" -c $(filter %.c, $^)
+
+%.@SHOBJEXT@:
+	$(CC) $(SHOBJFLAGS) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(SHOBJLDFLAGS) -o "$@" $(filter %.o, $^) $(LIBS)
+	@WEAKENSYMS@ "$@"
+	@REMOVESYMS@ "$@"
+
+clean:
+	rm -f pam_otp.o
+	rm -f pam_otp.@SHOBJEXT@
+
+distclean: clean
+	rm -f Makefile pam_otp.syms config.log config.status
+	rm -rf autom4te.cache
+
+mrproper: distclean
+	rm -f configure aclocal.m4
+
+test: test.o otp.o
+	$(CC) test.o otp.o $(LIBS) -o test
+	./test 
+
+install: pam_otp.@SHOBJEXT@
+	rm -f "$(DESTDIR)$(security_dir)/pam_otp.@SHOBJEXT@"
+	mkdir -p "$(DESTDIR)$(security_dir)"
+	cp pam_otp.@SHOBJEXT@ "$(DESTDIR)$(security_dir)/pam_otp.@SHOBJEXT@"
+	chmod 755 "$(DESTDIR)$(security_dir)/pam_otp.@SHOBJEXT@"
+	-chown root:root "$(DESTDIR)$(security_dir)/pam_otp.@SHOBJEXT@"
+
+.PHONY: all clean distclean install
