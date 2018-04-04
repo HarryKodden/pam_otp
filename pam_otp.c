@@ -34,9 +34,7 @@ typedef struct {
     char *ttl;
 } module_config;
 
-void
-free_config(module_config *cfg)
-{
+void free_config(module_config *cfg) {
     if (cfg) {
         free(&cfg->ldap_uri);
         free(&cfg->ldap_basedn);
@@ -59,8 +57,7 @@ void debug(const pam_handle_t *pamh, module_config *cfg, const char *fmt, ...) {
     }
 }
 
-int ldap(pam_handle_t * pamh, module_config * cfg, const char *user, const char *token)
-{
+int ldap(pam_handle_t * pamh, module_config * cfg, const char *user, const char *token) {
     LDAP *ld = NULL;
     LDAPMessage *result = NULL;
 
@@ -151,7 +148,7 @@ int ldap(pam_handle_t * pamh, module_config * cfg, const char *user, const char 
 
                 debug(pamh, cfg, "%s -> %s\n", a, v);
 
-                if (!strcmp(a, "uid") && !strcmp(v, user)) {
+                if (!strcmp(a, cfg->uid) && !strcmp(v, user)) {
                     debug(pamh, cfg, "MATCH !!!\n");
                     match = 1;
                 }
@@ -287,8 +284,7 @@ int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv)
  * returns -1 if an error occured (duplicate option)
  * returns the position of the start of the value in the buffer otherwise
  */
-int raw_parse_option(pam_handle_t *pamh, const char* buf, const char* opt_name_with_eq, char** dst)
-{
+int raw_parse_option(pam_handle_t *pamh, const char* buf, const char* opt_name_with_eq, char** dst) {
     size_t opt_len = strlen(opt_name_with_eq);
     if (0 == strncmp(buf, opt_name_with_eq, opt_len)) {
         if (dst && *dst) {
@@ -304,8 +300,7 @@ int raw_parse_option(pam_handle_t *pamh, const char* buf, const char* opt_name_w
 }
 
 /// calls strdup and returns whether we had a memory error
-int strdup_or_die(char** dst, const char* src)
-{
+int strdup_or_die(char** dst, const char* src) {
     *dst = strdup(src);
     return *dst ? 0 : -1;
 }
@@ -320,8 +315,7 @@ int strdup_or_die(char** dst, const char* src)
  * returns 1 if the option was found in buffer and parsed properly
  * returns -1 in case of error
  */
-int parse_str_option(pam_handle_t *pamh, const char* buf, const char* opt_name_with_eq, char** dst)
-{
+int parse_str_option(pam_handle_t *pamh, const char* buf, const char* opt_name_with_eq, char** dst) {
     int value_pos = raw_parse_option(pamh, buf, opt_name_with_eq, dst);
     if (value_pos > 0) {
         if (strdup_or_die(dst, buf + value_pos)) {
@@ -335,9 +329,7 @@ int parse_str_option(pam_handle_t *pamh, const char* buf, const char* opt_name_w
     return value_pos;
 }
 
-void
-parse_config(pam_handle_t *pamh, int argc, const char **argv, module_config **ncfg)
-{
+void parse_config(pam_handle_t *pamh, int argc, const char **argv, module_config **ncfg) {
     module_config *cfg = NULL;
     int mem_error = 0;
     int i;
