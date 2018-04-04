@@ -156,3 +156,10 @@ $ pam_otp/test RN6VIOSYM7PGUGUNOV7V2LMRDF6KKQON
 Token: 114887
 Done
 ~~~
+
+Example via docker container execution:
+~~~
+$  docker run pam pam_otp/test RN6VIOSYM7PGUGUNOV7V2LMRDF6KKQON
+Token: 114887
+Done
+~~~
