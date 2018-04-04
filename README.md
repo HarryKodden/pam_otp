@@ -149,3 +149,10 @@ Done
 ~~~
 
 The 'test' application can also be given a parameter, representing the TOTP secret key. The output of the test run will be the TOTP code given that TOTP secret and the systemtime. This should be the same TOTP code as displayed on your Google Authenticator app at the same moment.
+
+Example:
+~~~
+$ pam_otp/test RN6VIOSYM7PGUGUNOV7V2LMRDF6KKQON
+Token: 114887
+Done
+~~~
