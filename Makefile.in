@@ -14,10 +14,11 @@ security_dir = $(libdir)/security
 
 all: pam_otp.@SHOBJEXT@
 
-pam_otp.o: pam_otp.c
-otp.o: otp.c
-pam_otp.@SHOBJEXT@: pam_otp.o otp.o
-test.o: test.c
+pam_otp.o: pam_otp.c otp.h
+otp.o: otp.c otp.h
+base32.o: base32.c base32.h
+pam_otp.@SHOBJEXT@: pam_otp.o otp.o base32.o
+test.o: test.c base32.o otp.o
 
 %.o:
 	$(CC) $(SHOBJFLAGS) $(CFLAGS) $(CPPFLAGS) -o "$@" -c $(filter %.c, $^)
@@ -28,7 +29,7 @@ test.o: test.c
 	@REMOVESYMS@ "$@"
 
 clean:
-	rm -f pam_otp.o
+	rm -f *.o
 	rm -f pam_otp.@SHOBJEXT@
 
 distclean: clean
@@ -38,8 +39,8 @@ distclean: clean
 mrproper: distclean
 	rm -f configure aclocal.m4
 
-test: test.o otp.o
-	$(CC) test.o otp.o $(LIBS) -o test
+test: test.o otp.o base32.o
+	$(CC) test.o otp.o base32.o $(LIBS) -o test
 	./test 
 
 install: pam_otp.@SHOBJEXT@

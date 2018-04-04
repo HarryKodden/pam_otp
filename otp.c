@@ -6,6 +6,7 @@
 #include <gcrypt.h>
 #include <stdint.h>
 
+#include "base32.h"
 
 static int DIGITS_POWER[] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
 
@@ -110,9 +111,16 @@ static int TOTP (int Mode, char *Key, long epoch, int N) {
     return HOTP(Mode, Key, epoch/30, N);
 }
 
-int valid_token(char *secret, long epoch, int token) {
+int token (char *secret, long epoch) {
+    char decoded[1024];
+    base32_decode(secret, decoded);
 
-    return (token == TOTP(GCRY_MD_SHA1, secret, epoch, 6));
+    fprintf(stderr, "Base32 decode: \"%s\" -> \"%s\"\n", secret, decoded);
+    return TOTP(GCRY_MD_SHA1, decoded, epoch, 6);
+}
+
+int valid_token(char *secret, long epoch, int my_token) {
+    return (my_token == token(secret, epoch));
 }
 
 /*

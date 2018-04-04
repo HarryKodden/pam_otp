@@ -209,7 +209,7 @@ int ldap(pam_handle_t * pamh, module_config * cfg, const char *user, const char 
                 mods[0] = &lastLogon;
                 mods[1] = NULL;
 
-                if ((status = ldap_modify_s(ld, dn, mods)) != LDAP_SUCCESS) {
+                if ((status = ldap_modify_ext_s(ld, dn, mods, NULL, NULL)) != LDAP_SUCCESS) {
                    pam_syslog(pamh, LOG_ERR, "Could not delete attribute: \"%s\"", ldap_err2string(status));
                 }
 
@@ -238,7 +238,7 @@ int ldap(pam_handle_t * pamh, module_config * cfg, const char *user, const char 
                     mods[0] = &lastLogon;
                     mods[1] = NULL;
 
-                    if ((status = ldap_modify_s(ld, dn, mods)) != LDAP_SUCCESS) {
+                    if ((status = ldap_modify_ext_s(ld, dn, mods, NULL, NULL)) != LDAP_SUCCESS) {
                        pam_syslog(pamh, LOG_ERR, "Could not update attribute: \"%s\"", ldap_err2string(status));
                     }
 
