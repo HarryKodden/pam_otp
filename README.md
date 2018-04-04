@@ -22,7 +22,8 @@ sudo apt-get install autoconf
 sudo apt-get install shtool
 sudo apt-get install libpam-dev
 sudo apt-get install libcurl4-gnutls-dev
-sudi apt-get install libgcrypt libgcrypt-devel
+sudo apt-get install libgcrypt20 libgcrypt20-dev
+sudo apt-get install libldap2-dev
 ~~~
 
 On Fedora/Redhat/CentOS you will need:
@@ -31,9 +32,15 @@ sudo yum groupinstall 'Development Tools'
 sudo yum install shtool
 sudo yum install pam-devel
 sudo yum install libcurl curl-devel
-sudi yum install libgcrypt libgcrypt-devel
+sudo yum install libgcrypt libgcrypt-devel
 ~~~
 
+ALternatively, you can use 'docker' to install & run this package via a container.
+Using the Dockerfile, you can run it as:
+~~~
+docker build -t pam_otp .
+docker run pam_otp
+~~~
 
 After cloning the repository, do the following:
 
