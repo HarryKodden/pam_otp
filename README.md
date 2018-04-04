@@ -35,13 +35,6 @@ sudo yum install libcurl curl-devel
 sudo yum install libgcrypt libgcrypt-devel
 ~~~
 
-ALternatively, you can use 'docker' to install & run this package via a container.
-Using the Dockerfile, you can run it as:
-~~~
-docker build -t pam_otp .
-docker run pam_otp
-~~~
-
 After cloning the repository, do the following:
 
 ~~~
@@ -59,6 +52,13 @@ For example:
 
 ~~~
 ln -s /usr/local/lib/security/pam_otp.so /lib/security
+~~~
+
+Alternatively, you can use 'docker' to install & run this package via a container.
+Using the Dockerfile, you can run it as:
+~~~
+docker build -t pam_otp .
+docker run pam_otp
 ~~~
 
 # Sample Usage
@@ -148,3 +148,4 @@ TEST[18]: epoch: 20000000000, "Tue Oct 11 13:33:20 2603", SHA512, calculated TOT
 Done
 ~~~
 
+The 'test' application can also be given a parameter, representing the TOTP secret key. The output of the test run will be the TOTP code given that TOTP secret and the systemtime. This should be the same TOTP code as displayed on your Google Authenticator app at the same moment.
