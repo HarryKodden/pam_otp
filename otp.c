@@ -115,7 +115,6 @@ int token (char *secret, long epoch) {
     char decoded[1024];
     base32_decode(secret, decoded);
 
-    fprintf(stderr, "Base32 decode: \"%s\" -> \"%s\"\n", secret, decoded);
     return TOTP(GCRY_MD_SHA1, decoded, epoch, 6);
 }
 
