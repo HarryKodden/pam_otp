@@ -30,6 +30,7 @@ typedef struct {
     char *ldap_basedn;
     char *ldap_binddn;
     char *ldap_passwd;
+    char *ldap_filter;
     char *uid;
     char *ttl;
 } module_config;
@@ -40,6 +41,7 @@ void free_config(module_config *cfg) {
         free(&cfg->ldap_basedn);
         free(&cfg->ldap_binddn);
         free(&cfg->ldap_passwd);
+        free(&cfg->ldap_filter);
         free(&cfg->uid);
         free(&cfg->ttl);
         free(cfg);
@@ -104,7 +106,11 @@ int ldap(pam_handle_t * pamh, module_config * cfg, const char *user, const char 
 
     debug(pamh, cfg, "Searching: %s\n", base);
     char *filter;
-    asprintf(&filter, "(%s=%s)", cfg->uid, user);
+    if (cfg->ldap_filter != NULL && strlen(cfg->ldap_filter) > 0) {
+        asprintf(&filter, "(&%s(%s=%s))", cfg->ldap_filter, cfg->uid, user);
+    } else {
+        asprintf(&filter, "(%s=%s)", cfg->uid, user);
+    }
 
     status = ldap_search_ext_s(ld, base, LDAP_SCOPE_SUBTREE, filter,
                                0, 0, NULL,
@@ -345,6 +351,7 @@ void parse_config(pam_handle_t *pamh, int argc, const char **argv, module_config
     cfg->ldap_basedn = NULL;
     cfg->ldap_binddn = NULL;
     cfg->ldap_passwd = NULL;
+    cfg->ldap_filter = NULL;
     cfg->uid = NULL;
     cfg->ttl = NULL;
 
@@ -356,6 +363,7 @@ void parse_config(pam_handle_t *pamh, int argc, const char **argv, module_config
         if (retval == 0) retval = parse_str_option(pamh, argv[i], "basedn=", &cfg->ldap_basedn);
         if (retval == 0) retval = parse_str_option(pamh, argv[i], "binddn=", &cfg->ldap_binddn);
         if (retval == 0) retval = parse_str_option(pamh, argv[i], "passwd=", &cfg->ldap_passwd);
+        if (retval == 0) retval = parse_str_option(pamh, argv[i], "filter=", &cfg->ldap_filter);
         if (retval == 0) retval = parse_str_option(pamh, argv[i], "uid=", &cfg->uid);
         if (retval == 0) retval = parse_str_option(pamh, argv[i], "ttl=", &cfg->ttl);
 
@@ -387,11 +395,17 @@ void parse_config(pam_handle_t *pamh, int argc, const char **argv, module_config
        cfg->uid = strdup("0");
     }
 
+    if (! cfg->ldap_filter) {
+       debug(pamh, cfg, "Setting default value for 'filter' (=\"\")");
+       cfg->ldap_filter = strdup("");
+    }
+
     debug(pamh, cfg, "debug => %d",  cfg->debug);
     debug(pamh, cfg, "ldap_uri => %s",   cfg->ldap_uri);
     debug(pamh, cfg, "ldap_basedn => %s",   cfg->ldap_basedn);
     debug(pamh, cfg, "ldap_binddn => %s",   cfg->ldap_binddn);
     debug(pamh, cfg, "ldap_passwd => %s",   cfg->ldap_passwd);
+    debug(pamh, cfg, "ldap_filter => %s",   cfg->ldap_filter);
     debug(pamh, cfg, "uid => %s",   cfg->uid);
     debug(pamh, cfg, "ttl => %s",   cfg->ttl);
 
