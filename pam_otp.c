@@ -392,7 +392,7 @@ void parse_config(pam_handle_t *pamh, int argc, const char **argv, module_config
 
     if (! cfg->ttl) {
        debug(pamh, cfg, "Setting default value for 'ttl' (=0)");
-       cfg->uid = strdup("0");
+       cfg->ttl = strdup("0");
     }
 
     if (! cfg->ldap_filter) {
