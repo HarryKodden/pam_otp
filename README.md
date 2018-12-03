@@ -32,6 +32,7 @@ sudo yum groupinstall 'Development Tools'
 sudo yum install shtool
 sudo yum install pam-devel
 sudo yum install libcurl curl-devel
+sudo yum install openldap-devel
 sudo yum install libgcrypt libgcrypt-devel
 ~~~
 
